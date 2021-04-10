@@ -85,26 +85,29 @@ class _HomePageState extends State<HomePage> {
             ),
             Form(
               key: _form,
-              child: TextFormField(
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  labelText: 'Search By Country',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    labelText: 'Search By Country',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(),
+                    ),
                   ),
+                  focusNode: _searchFocusNode,
+                  controller: _searchController,
+                  onSaved: (value) {
+                    _userInput = value;
+                  },
+                  onEditingComplete: () {
+                    setState(() {});
+                  },
+                  onFieldSubmitted: (value) {
+                    _saveForm();
+                  },
                 ),
-                focusNode: _searchFocusNode,
-                controller: _searchController,
-                onSaved: (value) {
-                  _userInput = value;
-                },
-                onEditingComplete: () {
-                  setState(() {});
-                },
-                onFieldSubmitted: (value) {
-                  _saveForm();
-                },
               ),
             ),
             SizedBox(
