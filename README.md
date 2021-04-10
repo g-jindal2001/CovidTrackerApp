@@ -1,4 +1,4 @@
-# WeatherApp
+# CovidTrackerApp
 
 A new Flutter project.
 
