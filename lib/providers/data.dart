@@ -6,9 +6,13 @@ import 'package:http/http.dart' as http;
 class Data with ChangeNotifier {
   Map<String, String> _data = {
     'cases': '',
-    'active_cases': '',
+    'activeCases': '',
     'recovered': '',
     'deaths': '',
+    'countryCases': '',
+    'countryActiveCases': '',
+    'countryRecovered': '',
+    'countryDeaths': '',
   };
 
   Map<String, String> get data {
@@ -24,12 +28,41 @@ class Data with ChangeNotifier {
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
 
       _data['cases'] = extractedData['cases'].toString();
-      _data['active_cases'] = extractedData['active'].toString();
+      _data['activeCases'] = extractedData['active'].toString();
       _data['recovered'] = extractedData['recovered'].toString();
       _data['deaths'] = extractedData['deaths'].toString();
 
       notifyListeners();
     } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<void> loadAndUpdateCovidCountryData(String country) async {
+    String countryUrl =
+        'https://disease.sh/v3/covid-19/countries/$country?yesterday=false&twoDaysAgo=false&strict=true';
+    try {
+      final responseCountry = await http.get(countryUrl);
+
+      if (responseCountry.statusCode == 200) {
+        print(json.decode(responseCountry.body));
+
+        final countryExtractedData =
+            json.decode(responseCountry.body) as Map<String, dynamic>;
+
+        _data['countryCases'] = countryExtractedData['cases'].toString();
+        _data['countryActiveCases'] = countryExtractedData['active'].toString();
+        _data['countryRecovered'] =
+            countryExtractedData['recovered'].toString();
+        _data['countryDeaths'] = countryExtractedData['deaths'].toString();
+      }
+      else {
+        throw ("Country name does not exist");
+      }
+
+      notifyListeners();
+    } catch (error) {
+      print(error);
       throw error;
     }
   }

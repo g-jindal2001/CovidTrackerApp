@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() {//To load initial Data one time
     if (_isInit) {
       Provider.of<Data>(context, listen: false).loadAndUpdateCoviddata();
     }
@@ -51,8 +51,15 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _saveForm() {
+  void _saveForm() async {
     _form.currentState.save();
+    try {
+      await Provider.of<Data>(context, listen: false)
+          .loadAndUpdateCovidCountryData(_userInput.toString());
+    } catch (error) {
+      return;
+    }
+
     if (_userInput.toString().isNotEmpty) {
       Navigator.of(context).pushNamed(
         Country.routeName,
@@ -122,7 +129,7 @@ class _HomePageState extends State<HomePage> {
             CardHomePage(
               'Active Cases',
               Icons.people,
-              covidData['active_cases'],
+              covidData['activeCases'],
               Colors.orange,
             ),
             CardHomePage(
