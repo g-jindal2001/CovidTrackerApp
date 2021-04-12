@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/data.dart';
 
-import '../widgets/card_home_page.dart';
+import '../widgets/card_country_page.dart';
 
 class Country extends StatefulWidget {
   static const routeName = '/country';
@@ -44,37 +43,99 @@ class _CountryState extends State<Country> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Covid-19 cases in $countryName2'),
+        title: Text('Covid-19 stats in $countryName2'),
       ),
       body: RefreshIndicator(
         onRefresh: () => _refreshCountryData(context, countryName2),
         child: ListView(
           children: [
-            SizedBox(height:15),
-            CardHomePage(
-              'Cases',
-              Icons.insights,
-              covidCountryData['countryCases'],
-              Colors.lightBlue,
+            SizedBox(height: 25),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CardCountryPage(
+                      'Affected',
+                      covidCountryData['countryCases'],
+                      Colors.blue,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 24,
+                  ),
+                  Expanded(
+                    child: CardCountryPage(
+                      'Deaths',
+                      covidCountryData['countryDeaths'],
+                      Colors.red,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            CardHomePage(
-              'Active Cases',
-              Icons.people,
-              covidCountryData['countryActiveCases'],
-              Colors.orange,
+            SizedBox(
+              height: 24,
             ),
-            CardHomePage(
-              'Recovered',
-              Icons.science,
-              covidCountryData['countryRecovered'],
-              Colors.green,
-            ),
-            CardHomePage(
-              'Deaths',
-              MdiIcons.skullCrossbones,
-              covidCountryData['countryDeaths'],
-              Colors.red,
-            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CardCountryPage(
+                      'Recovered',
+                      covidCountryData['countryRecovered'],
+                      Colors.green,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 24,
+                  ),
+                  Expanded(
+                    child: CardCountryPage(
+                      'Active',
+                      covidCountryData['countryActiveCases'],
+                      Colors.orange,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 24,
+                  ),
+                  Expanded(
+                    child: CardCountryPage(
+                      'Serious',
+                      covidCountryData['countrySerious'],
+                      Colors.purple,
+                    ),
+                  ),
+                ],
+              ),
+            )
+            // SizedBox(height:15),
+            // CardHomePage(
+            //   'Cases',
+            //   Icons.insights,
+            //   covidCountryData['countryCases'],
+            //   Colors.lightBlue,
+            // ),
+            // CardHomePage(
+            //   'Active Cases',
+            //   Icons.people,
+            //   covidCountryData['countryActiveCases'],
+            //   Colors.orange,
+            // ),
+            // CardHomePage(
+            //   'Recovered',
+            //   Icons.science,
+            //   covidCountryData['countryRecovered'],
+            //   Colors.green,
+            // ),
+            // CardHomePage(
+            //   'Deaths',
+            //   MdiIcons.skullCrossbones,
+            //   covidCountryData['countryDeaths'],
+            //   Colors.red,
+            // ),
           ],
         ),
       ),

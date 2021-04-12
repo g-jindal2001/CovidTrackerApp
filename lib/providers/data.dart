@@ -13,6 +13,7 @@ class Data with ChangeNotifier {
     'countryActiveCases': '',
     'countryRecovered': '',
     'countryDeaths': '',
+    'countrySerious': '',
   };
 
   Map<String, String> get data {
@@ -55,6 +56,7 @@ class Data with ChangeNotifier {
         _data['countryRecovered'] =
             countryExtractedData['recovered'].toString();
         _data['countryDeaths'] = countryExtractedData['deaths'].toString();
+        _data['countrySerious'] = countryExtractedData['critical'].toString();
       }
       else {
         throw ("Country name does not exist");

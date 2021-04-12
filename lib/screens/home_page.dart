@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
             Form(
               key: _form,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextFormField(
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.search),

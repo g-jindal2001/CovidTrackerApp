@@ -55,12 +55,12 @@ class CardHomePage extends StatelessWidget {
         ),
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Color(0xFF27292F),
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.black12,
       ),
       height: 140,
       width: double.infinity,
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
     );
   }
 }
