@@ -41,14 +41,14 @@ class About extends StatelessWidget {
                   content: Text(
                       'This will navigate you to the site $url in your browser'),
                   actions: [
-                    FlatButton(
+                    TextButton(
                       onPressed: () {
                         launchURL(url);
                         Navigator.of(ctx).pop();
                       },
                       child: Text('Yes'),
                     ),
-                    FlatButton(
+                    TextButton(
                       onPressed: () => Navigator.of(ctx).pop(),
                       child: Text('No'),
                     ),

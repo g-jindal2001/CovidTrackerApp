@@ -1,4 +1,4 @@
-name: CovidTrackerApp
+name: covid_tracker_app
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -28,7 +28,7 @@ dependencies:
   url_launcher: ^4.0.3
   provider: ^4.0.0
   http: ^0.12.2
-
+  fl_chart: ^0.35.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
