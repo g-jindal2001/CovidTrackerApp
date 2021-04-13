@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 import '../providers/data.dart';
 
 import '../widgets/card_country_page.dart';
+import '../widgets/daily_cases_or_deaths_chart.dart';
 
 class Country extends StatefulWidget {
   static const routeName = '/country';
@@ -14,6 +16,15 @@ class Country extends StatefulWidget {
 
 class _CountryState extends State<Country> {
   var _isInit = true;
+  List<FlSpot> pointsToBePlotted = [
+    FlSpot(0, 3),
+    FlSpot(2.6, 2),
+    FlSpot(4.9, 5),
+    FlSpot(6.8, 3.1),
+    FlSpot(8, 4),
+    FlSpot(9.5, 3),
+    FlSpot(11, 4),
+  ];
 
   @override
   void didChangeDependencies() {
@@ -110,32 +121,17 @@ class _CountryState extends State<Country> {
                   ),
                 ],
               ),
-            )
-            // SizedBox(height:15),
-            // CardHomePage(
-            //   'Cases',
-            //   Icons.insights,
-            //   covidCountryData['countryCases'],
-            //   Colors.lightBlue,
-            // ),
-            // CardHomePage(
-            //   'Active Cases',
-            //   Icons.people,
-            //   covidCountryData['countryActiveCases'],
-            //   Colors.orange,
-            // ),
-            // CardHomePage(
-            //   'Recovered',
-            //   Icons.science,
-            //   covidCountryData['countryRecovered'],
-            //   Colors.green,
-            // ),
-            // CardHomePage(
-            //   'Deaths',
-            //   MdiIcons.skullCrossbones,
-            //   covidCountryData['countryDeaths'],
-            //   Colors.red,
-            // ),
+            ),
+            SizedBox(height: 24),
+            DailyNewCasesOrDeaths(
+              'Daily new cases',
+              pointsToBePlotted,
+            ),
+            SizedBox(height: 24),
+            DailyNewCasesOrDeaths(
+              'Daily new deaths',
+              pointsToBePlotted,
+            ),
           ],
         ),
       ),

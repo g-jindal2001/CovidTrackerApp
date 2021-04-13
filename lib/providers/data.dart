@@ -21,8 +21,9 @@ class Data with ChangeNotifier {
   }
 
   Future<void> loadAndUpdateCoviddata() async {
-    const url =
-        'https://disease.sh/v3/covid-19/all?yesterday=false&twoDaysAgo=false';
+    final url = Uri.parse(
+        'https://disease.sh/v3/covid-19/all?yesterday=false&twoDaysAgo=false');
+
     try {
       final response = await http.get(url);
       print(json.decode(response.body));
@@ -40,8 +41,9 @@ class Data with ChangeNotifier {
   }
 
   Future<void> loadAndUpdateCovidCountryData(String country) async {
-    String countryUrl =
-        'https://disease.sh/v3/covid-19/countries/$country?yesterday=false&twoDaysAgo=false&strict=true';
+    final countryUrl = Uri.parse(
+        'https://disease.sh/v3/covid-19/countries/$country?yesterday=false&twoDaysAgo=false&strict=true');
+
     try {
       final responseCountry = await http.get(countryUrl);
 
@@ -57,8 +59,7 @@ class Data with ChangeNotifier {
             countryExtractedData['recovered'].toString();
         _data['countryDeaths'] = countryExtractedData['deaths'].toString();
         _data['countrySerious'] = countryExtractedData['critical'].toString();
-      }
-      else {
+      } else {
         throw ("Country name does not exist");
       }
 
