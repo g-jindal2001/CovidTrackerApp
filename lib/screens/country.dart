@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 import '../providers/data.dart';
+import '../providers/chartData.dart';
 
 import '../widgets/card_country_page.dart';
 import '../widgets/daily_cases_or_deaths_chart.dart';
@@ -16,15 +16,8 @@ class Country extends StatefulWidget {
 
 class _CountryState extends State<Country> {
   var _isInit = true;
-  List<FlSpot> pointsToBePlotted = [
-    FlSpot(0, 3),
-    FlSpot(2.6, 2),
-    FlSpot(4.9, 5),
-    FlSpot(6.8, 3.1),
-    FlSpot(8, 4),
-    FlSpot(9.5, 3),
-    FlSpot(11, 4),
-  ];
+  static const List<String> casesList = ['10k', '30k', '50k',];
+  static const List<String> deathsList = ['1k', '3k', '5k',];
 
   @override
   void didChangeDependencies() {
@@ -33,6 +26,10 @@ class _CountryState extends State<Country> {
       try {
         Provider.of<Data>(context, listen: false)
             .loadAndUpdateCovidCountryData(countryName);
+
+        final chart = Provider.of<ChartData>(context, listen: false);
+        chart.fetchDailyCasesPlotData(countryName);
+        chart.fetchDailyDeathsPlotData(countryName);
       } catch (error) {
         print(error.toString());
       }
@@ -51,6 +48,7 @@ class _CountryState extends State<Country> {
   Widget build(BuildContext context) {
     final countryName2 = ModalRoute.of(context).settings.arguments as String;
     final covidCountryData = Provider.of<Data>(context).data;
+    final covidCountryChartData = Provider.of<ChartData>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -125,12 +123,14 @@ class _CountryState extends State<Country> {
             SizedBox(height: 24),
             DailyNewCasesOrDeaths(
               'Daily new cases',
-              pointsToBePlotted,
+              covidCountryChartData.plotDailyCasesData,
+              casesList,
             ),
             SizedBox(height: 24),
             DailyNewCasesOrDeaths(
               'Daily new deaths',
-              pointsToBePlotted,
+              covidCountryChartData.plotDailyDeathsData,
+              deathsList,
             ),
           ],
         ),

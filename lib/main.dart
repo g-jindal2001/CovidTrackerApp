@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import './providers/data.dart';
+import './providers/chartData.dart';
 
 import './screens/home_page.dart';
 import './screens/dosanddonts.dart';
@@ -19,6 +20,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => Data(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ChartData(),
         ),
       ],
       child: GestureDetector(

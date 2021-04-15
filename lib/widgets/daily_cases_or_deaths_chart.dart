@@ -9,8 +9,9 @@ List<Color> gradientColors = [
 class DailyNewCasesOrDeaths extends StatefulWidget {
   final String title;
   final List<FlSpot> points;
+  final List<String> yAxis;
 
-  DailyNewCasesOrDeaths(this.title, this.points);
+  DailyNewCasesOrDeaths(this.title, this.points, this.yAxis);
 
   @override
   _DailyNewCasesOrDeathsState createState() => _DailyNewCasesOrDeathsState();
@@ -38,9 +39,12 @@ class _DailyNewCasesOrDeathsState extends State<DailyNewCasesOrDeaths> {
               ),
               child: Padding(
                 padding: const EdgeInsets.only(
-                    right: 18.0, left: 12.0, top: 24, bottom: 12),
+                    right: 18.0, left: 12.0, top: 44, bottom: 12),
                 child: LineChart(
-                  dailyNewCasesChild(widget.points),
+                  dailyNewCasesOrDeathsChild(
+                    widget.points,
+                    widget.yAxis,
+                  ),
                 ),
               ),
             ),
@@ -52,7 +56,21 @@ class _DailyNewCasesOrDeathsState extends State<DailyNewCasesOrDeaths> {
   }
 }
 
-LineChartData dailyNewCasesChild(List<FlSpot> plotpoints) {
+LineChartData dailyNewCasesOrDeathsChild(
+    List<FlSpot> plotpoints, List<String> yAxisPoints) {
+  String getSideTitles(double value) {
+    // print('Chart value $value');
+    switch (value.toInt()) {
+      case 1:
+        return '10k';
+      case 5:
+        return '50k';
+      case 9:
+        return '90k';
+    }
+    return '';
+  }
+
   return LineChartData(
     gridData: FlGridData(
       show: false,
@@ -86,36 +104,25 @@ LineChartData dailyNewCasesChild(List<FlSpot> plotpoints) {
           fontWeight: FontWeight.bold,
           fontSize: 15,
         ),
-        getTitles: (value) {
-          switch (value.toInt()) {
-            case 1:
-              return '10k';
-            case 3:
-              return '30k';
-            case 5:
-              return '50k';
-          }
-          return '';
-        },
+        getTitles: getSideTitles,
         reservedSize: 28,
         margin: 12,
       ),
     ),
     borderData: FlBorderData(
       show: false,
-      // border: Border.all(color: const Color(0xff37434d), width: 1),
     ),
     minX: 0,
-    maxX: 11,
+    maxX: plotpoints.length.toDouble(),
     minY: 0,
-    maxY: 6,
+    maxY: 10,
     lineTouchData: LineTouchData(enabled: false),
     lineBarsData: [
       LineChartBarData(
         spots: plotpoints,
         isCurved: true,
         colors: gradientColors,
-        barWidth: 5,
+        barWidth: 2,
         isStrokeCapRound: true,
         dotData: FlDotData(
           show: false,

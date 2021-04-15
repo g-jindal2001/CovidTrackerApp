@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/http_exception.dart';
+
 class Data with ChangeNotifier {
   Map<String, String> _data = {
     'cases': '',
@@ -26,7 +28,6 @@ class Data with ChangeNotifier {
 
     try {
       final response = await http.get(url);
-      print(json.decode(response.body));
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
 
       _data['cases'] = extractedData['cases'].toString();
@@ -48,8 +49,6 @@ class Data with ChangeNotifier {
       final responseCountry = await http.get(countryUrl);
 
       if (responseCountry.statusCode == 200) {
-        print(json.decode(responseCountry.body));
-
         final countryExtractedData =
             json.decode(responseCountry.body) as Map<String, dynamic>;
 
@@ -60,7 +59,7 @@ class Data with ChangeNotifier {
         _data['countryDeaths'] = countryExtractedData['deaths'].toString();
         _data['countrySerious'] = countryExtractedData['critical'].toString();
       } else {
-        throw ("Country name does not exist");
+        throw HttpException("Country name does not exist");
       }
 
       notifyListeners();
