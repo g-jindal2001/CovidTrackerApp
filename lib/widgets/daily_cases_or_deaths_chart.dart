@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/helpers/helper_funtions.dart';
+
 List<Color> gradientColors = [
   const Color(0xff23b6e6),
   const Color(0xff02d39a),
@@ -9,9 +11,9 @@ List<Color> gradientColors = [
 class DailyNewCasesOrDeaths extends StatefulWidget {
   final String title;
   final List<FlSpot> points;
-  final List<String> yAxis;
+  final double maxNo;
 
-  DailyNewCasesOrDeaths(this.title, this.points, this.yAxis);
+  DailyNewCasesOrDeaths(this.title, this.points, this.maxNo);
 
   @override
   _DailyNewCasesOrDeathsState createState() => _DailyNewCasesOrDeathsState();
@@ -43,7 +45,7 @@ class _DailyNewCasesOrDeathsState extends State<DailyNewCasesOrDeaths> {
                 child: LineChart(
                   dailyNewCasesOrDeathsChild(
                     widget.points,
-                    widget.yAxis,
+                    widget.maxNo,
                   ),
                 ),
               ),
@@ -57,17 +59,26 @@ class _DailyNewCasesOrDeathsState extends State<DailyNewCasesOrDeaths> {
 }
 
 LineChartData dailyNewCasesOrDeathsChild(
-    List<FlSpot> plotpoints, List<String> yAxisPoints) {
-  String getSideTitles(double value) {
-    // print('Chart value $value');
-    switch (value.toInt()) {
-      case 1:
-        return '10k';
-      case 5:
-        return '50k';
-      case 9:
-        return '90k';
+    List<FlSpot> plotpoints, double maxStat) {
+  double maxValue = HelperFunctions().maxPossibleChartValue();
+  String getBottomTitles(double value) {
+    print('Chart value $value');
+    if (value == maxValue / 4.0) {
+      return HelperFunctions().getMonthAndYear(maxValue / 4.0);
+    } else if (value == maxValue / 2.0) {
+      return HelperFunctions().getMonthAndYear(maxValue / 2.0);
+    } else if (value == (maxValue * 3) / 4.0) {
+      return HelperFunctions().getMonthAndYear((maxValue * 3) / 4.0);
     }
+
+    // switch (value.toInt()) {
+    //   case 100:
+    //     return "APR '20";
+    //   case 200:
+    //     return "OCT'20";
+    //   case 300:
+    //     return "MAR '21";
+    // }
     return '';
   }
 
@@ -83,18 +94,8 @@ LineChartData dailyNewCasesOrDeathsChild(
         getTextStyles: (value) => const TextStyle(
             color: Color(0xff68737d),
             fontWeight: FontWeight.bold,
-            fontSize: 16),
-        getTitles: (value) {
-          switch (value.toInt()) {
-            case 2:
-              return 'MAR';
-            case 5:
-              return 'JUN';
-            case 8:
-              return 'SEP';
-          }
-          return '';
-        },
+            fontSize: 11),
+        getTitles: getBottomTitles,
         margin: 8,
       ),
       leftTitles: SideTitles(
@@ -104,8 +105,21 @@ LineChartData dailyNewCasesOrDeathsChild(
           fontWeight: FontWeight.bold,
           fontSize: 15,
         ),
-        getTitles: getSideTitles,
-        reservedSize: 28,
+        getTitles: (value) {
+          switch (value.toInt()) {
+            case 1:
+              return HelperFunctions()
+                  .condensedNumber(maxStat == null ? 0.0 : maxStat / 9.0);
+            case 5:
+              return HelperFunctions()
+                  .condensedNumber(maxStat == null ? 0.0 : maxStat / 5.0);
+            case 9:
+              return HelperFunctions()
+                  .condensedNumber(maxStat == null ? 0.0 : maxStat / 1.0);
+          }
+          return '';
+        },
+        reservedSize: 38,
         margin: 12,
       ),
     ),

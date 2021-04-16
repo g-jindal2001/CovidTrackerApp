@@ -6,11 +6,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
-import '../utils/helpers/scaling_factor_helper.dart';
+import '../utils/helpers/helper_funtions.dart';
 
 class ChartData with ChangeNotifier {
   List<FlSpot> _plotDailyCasesData = [];
   List<FlSpot> _plotDailyDeathsData = [];
+  double _maxCases;
+  double _maxDeaths;
 
   List<FlSpot> get plotDailyCasesData {
     return [..._plotDailyCasesData];
@@ -18,6 +20,14 @@ class ChartData with ChangeNotifier {
 
   List<FlSpot> get plotDailyDeathsData {
     return [..._plotDailyDeathsData];
+  }
+
+  double get maxCases {
+    return _maxCases;
+  }
+
+  double get maxDeaths {
+    return _maxDeaths;
   }
 
   Future<void> fetchDailyCasesPlotData(String country) async {
@@ -31,25 +41,38 @@ class ChartData with ChangeNotifier {
 
     try {
       final responseCases = await http.get(urlDailyCases);
-      final extractedDailyCases = json.decode(responseCases.body)['timeline']
+      var extractedDailyCases = json.decode(responseCases.body)['timeline']
           ['cases'] as Map<String, dynamic>;
 
-      extractedDailyCases.values.toList().asMap().forEach((key, value) {
+      Map<int, dynamic> casesMap =
+          HelperFunctions().copyOfMap(extractedDailyCases.values.toList());
+
+      casesMap.forEach((casesKey, casesValue) {
         //Getting list of daily new cases for that country
-        if (key == 0) {
+        if (casesKey == 0) {
           // for first iteration
-          newCasesKeys.add(key.toDouble());
-          newCases.add(double.parse(value.toString()));
+          newCasesKeys.add(casesKey.toDouble());
+          newCases.add(double.parse(casesValue.toString()));
         } else {
-          newCasesKeys.add(key.toDouble());
-          temp = double.parse(extractedDailyCases.values.toList().asMap()[key - 1].toString());//temp stores the amount of cases for yestreday
-          newCases.add((value - temp));
+          newCasesKeys.add(casesKey.toDouble());
+          temp = double.parse(casesMap[casesKey - 1]
+              .toString()); //temp stores the amount of cases for yesterday
+          if ((casesValue - temp) < 0) {
+            // casesMap.update(casesKey + 1, (existingValue) => existingValue + (casesValue-temp));
+            newCases.add(0.0);
+          } else {
+            newCases.add((casesValue - temp));
+          }
         }
       });
-      print(newCases.reduce(min));
-      maxNo = newCases.reduce(max);//Get the highest number
 
-      scaleFactor = ScalingFactorHelper().scaleFactor(maxNo);
+      print(newCases.reduce(max));
+
+      maxNo = newCases.reduce(max); //Get the highest number
+
+      _maxCases = maxNo;
+
+      scaleFactor = HelperFunctions().scaleFactor(maxNo);
 
       newCases = newCases.map((element) => element / scaleFactor).toList();
 
@@ -65,7 +88,7 @@ class ChartData with ChangeNotifier {
           ),
         );
       }
-   
+
       notifyListeners();
     } catch (error) {
       throw error;
@@ -94,14 +117,24 @@ class ChartData with ChangeNotifier {
           newDeaths.add(double.parse(value.toString()));
         } else {
           newDeathsKeys.add(key.toDouble());
-          tempDeaths = double.parse(extractedDailyDeaths.values.toList().asMap()[key - 1].toString());
-          newDeaths.add((value - tempDeaths) / 1000.0);
+          tempDeaths = double.parse(
+              extractedDailyDeaths.values.toList().asMap()[key - 1].toString());
+          if ((value - tempDeaths) < 0) {
+            // casesMap.update(casesKey + 1, (existingValue) => existingValue + (casesValue-temp));
+            newDeaths.add(0.0);
+          } else {
+            newDeaths.add((value - tempDeaths));
+          }
         }
       });
 
+      print(newDeaths.reduce(max));
+
       maxNo = newDeaths.reduce(max);
 
-      scaleFactor = ScalingFactorHelper().scaleFactor(maxNo);
+      _maxDeaths = maxNo;
+
+      scaleFactor = HelperFunctions().scaleFactor(maxNo);
 
       newDeaths = newDeaths.map((element) => element / scaleFactor).toList();
 

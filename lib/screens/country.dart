@@ -16,8 +16,6 @@ class Country extends StatefulWidget {
 
 class _CountryState extends State<Country> {
   var _isInit = true;
-  static const List<String> casesList = ['10k', '30k', '50k',];
-  static const List<String> deathsList = ['1k', '3k', '5k',];
 
   @override
   void didChangeDependencies() {
@@ -124,13 +122,13 @@ class _CountryState extends State<Country> {
             DailyNewCasesOrDeaths(
               'Daily new cases',
               covidCountryChartData.plotDailyCasesData,
-              casesList,
+              covidCountryChartData.maxCases,
             ),
             SizedBox(height: 24),
             DailyNewCasesOrDeaths(
               'Daily new deaths',
               covidCountryChartData.plotDailyDeathsData,
-              deathsList,
+              covidCountryChartData.maxDeaths,
             ),
           ],
         ),
