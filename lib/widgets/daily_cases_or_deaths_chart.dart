@@ -70,15 +70,6 @@ LineChartData dailyNewCasesOrDeathsChild(
     } else if (value == (maxValue * 3) / 4.0) {
       return HelperFunctions().getMonthAndYear((maxValue * 3) / 4.0);
     }
-
-    // switch (value.toInt()) {
-    //   case 100:
-    //     return "APR '20";
-    //   case 200:
-    //     return "OCT'20";
-    //   case 300:
-    //     return "MAR '21";
-    // }
     return '';
   }
 
