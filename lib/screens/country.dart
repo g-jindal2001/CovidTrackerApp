@@ -16,17 +16,24 @@ class Country extends StatefulWidget {
 
 class _CountryState extends State<Country> {
   var _isInit = true;
+  var _isLoading = false;
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
       final countryName = ModalRoute.of(context).settings.arguments as String;
       try {
         Provider.of<Data>(context, listen: false)
             .loadAndUpdateCovidCountryData(countryName);
 
         final chart = Provider.of<ChartData>(context, listen: false);
-        chart.fetchDailyCasesPlotData(countryName);
+        chart.fetchDailyCasesPlotData(countryName).then((_) => setState(() {
+              _isLoading = false;
+            }));
+
         chart.fetchDailyDeathsPlotData(countryName);
       } catch (error) {
         print(error.toString());
@@ -52,87 +59,91 @@ class _CountryState extends State<Country> {
       appBar: AppBar(
         title: Text('Covid-19 stats in $countryName2'),
       ),
-      body: RefreshIndicator(
-        onRefresh: () => _refreshCountryData(context, countryName2),
-        child: ListView(
-          children: [
-            SizedBox(height: 25),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : RefreshIndicator(
+              onRefresh: () => _refreshCountryData(context, countryName2),
+              child: ListView(
                 children: [
-                  Expanded(
-                    child: CardCountryPage(
-                      'Affected',
-                      covidCountryData['countryCases'],
-                      Colors.blue,
+                  SizedBox(height: 25),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: CardCountryPage(
+                            'Affected',
+                            covidCountryData['countryCases'],
+                            Colors.blue,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 24,
+                        ),
+                        Expanded(
+                          child: CardCountryPage(
+                            'Deaths',
+                            covidCountryData['countryDeaths'],
+                            Colors.red,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(
-                    width: 24,
+                    height: 24,
                   ),
-                  Expanded(
-                    child: CardCountryPage(
-                      'Deaths',
-                      covidCountryData['countryDeaths'],
-                      Colors.red,
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: CardCountryPage(
+                            'Recovered',
+                            covidCountryData['countryRecovered'],
+                            Colors.green,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 24,
+                        ),
+                        Expanded(
+                          child: CardCountryPage(
+                            'Active',
+                            covidCountryData['countryActiveCases'],
+                            Colors.orange,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 24,
+                        ),
+                        Expanded(
+                          child: CardCountryPage(
+                            'Serious',
+                            covidCountryData['countrySerious'],
+                            Colors.purple,
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+                  SizedBox(height: 24),
+                  DailyNewCasesOrDeaths(
+                    'Daily new cases',
+                    covidCountryChartData.plotDailyCasesData,
+                    covidCountryChartData.maxCases,
+                  ),
+                  SizedBox(height: 24),
+                  DailyNewCasesOrDeaths(
+                    'Daily new deaths',
+                    covidCountryChartData.plotDailyDeathsData,
+                    covidCountryChartData.maxDeaths,
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              height: 24,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: CardCountryPage(
-                      'Recovered',
-                      covidCountryData['countryRecovered'],
-                      Colors.green,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 24,
-                  ),
-                  Expanded(
-                    child: CardCountryPage(
-                      'Active',
-                      covidCountryData['countryActiveCases'],
-                      Colors.orange,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 24,
-                  ),
-                  Expanded(
-                    child: CardCountryPage(
-                      'Serious',
-                      covidCountryData['countrySerious'],
-                      Colors.purple,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 24),
-            DailyNewCasesOrDeaths(
-              'Daily new cases',
-              covidCountryChartData.plotDailyCasesData,
-              covidCountryChartData.maxCases,
-            ),
-            SizedBox(height: 24),
-            DailyNewCasesOrDeaths(
-              'Daily new deaths',
-              covidCountryChartData.plotDailyDeathsData,
-              covidCountryChartData.maxDeaths,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

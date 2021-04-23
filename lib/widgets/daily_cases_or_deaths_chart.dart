@@ -62,7 +62,7 @@ LineChartData dailyNewCasesOrDeathsChild(
     List<FlSpot> plotpoints, double maxStat) {
   double maxValue = HelperFunctions().maxPossibleChartValue();
   String getBottomTitles(double value) {
-    print('Chart value $value');
+    // print('Chart value $value');
     if (value == maxValue / 4.0) {
       return HelperFunctions().getMonthAndYear(maxValue / 4.0);
     } else if (value == maxValue / 2.0) {
