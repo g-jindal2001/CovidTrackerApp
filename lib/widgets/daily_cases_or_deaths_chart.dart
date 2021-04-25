@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/helpers/helper_funtions.dart';
+import '../utils/helpers/helper.dart';
 
 List<Color> gradientColors = [
   const Color(0xff23b6e6),
@@ -12,8 +12,9 @@ class DailyNewCasesOrDeaths extends StatefulWidget {
   final String title;
   final List<FlSpot> points;
   final double maxNo;
+  final Function sizeOfWidget;
 
-  DailyNewCasesOrDeaths(this.title, this.points, this.maxNo);
+  DailyNewCasesOrDeaths(this.title, this.points, this.maxNo, this.sizeOfWidget);
 
   @override
   _DailyNewCasesOrDeathsState createState() => _DailyNewCasesOrDeathsState();
@@ -32,20 +33,25 @@ class _DailyNewCasesOrDeathsState extends State<DailyNewCasesOrDeaths> {
           ),
           AspectRatio(
             aspectRatio: 1.70,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(18),
+            child: SizeProviderWidget(
+              onChildSize: (size) {
+                widget.sizeOfWidget(size);
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(18),
+                  ),
+                  color: Colors.black12,
                 ),
-                color: Colors.black12,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    right: 18.0, left: 12.0, top: 44, bottom: 12),
-                child: LineChart(
-                  dailyNewCasesOrDeathsChild(
-                    widget.points,
-                    widget.maxNo,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      right: 18.0, left: 12.0, top: 44, bottom: 12),
+                  child: LineChart(
+                    dailyNewCasesOrDeathsChild(
+                      widget.points,
+                      widget.maxNo,
+                    ),
                   ),
                 ),
               ),

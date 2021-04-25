@@ -6,7 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
-import '../utils/helpers/helper_funtions.dart';
+import '../utils/helpers/helper.dart';
 
 class ChartData with ChangeNotifier {
   List<FlSpot> _plotDailyCasesData = [];

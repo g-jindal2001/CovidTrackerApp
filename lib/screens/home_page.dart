@@ -9,6 +9,7 @@ import '../screens/country.dart';
 
 import '../widgets/app_drawer.dart';
 import '../widgets/card_home_page.dart';
+import '../widgets/shimmer.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -21,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   final _searchController = TextEditingController();
   final _form = GlobalKey<FormState>();
   var _isInit = true;
+  var _isLoading = false;
 
   @override
   void initState() {
@@ -29,9 +31,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void didChangeDependencies() {//To load initial Data one time
+  void didChangeDependencies() {
+    //To load initial Data one time
     if (_isInit) {
-      Provider.of<Data>(context, listen: false).loadAndUpdateCoviddata();
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Data>(context, listen: false)
+          .loadAndUpdateCoviddata()
+          .then((_) => setState(() {
+                _isLoading = false;
+              }));
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -120,30 +130,38 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 15,
             ),
-            CardHomePage(
-              'Cases',
-              Icons.insights,
-              covidData['cases'],
-              Colors.lightBlue,
-            ),
-            CardHomePage(
-              'Active Cases',
-              Icons.people,
-              covidData['activeCases'],
-              Colors.orange,
-            ),
-            CardHomePage(
-              'Recovered',
-              Icons.science,
-              covidData['recovered'],
-              Colors.green,
-            ),
-            CardHomePage(
-              'Deaths',
-              MdiIcons.skullCrossbones,
-              covidData['deaths'],
-              Colors.red,
-            ),
+            _isLoading
+                ? ShimmerObjects().shimmerHomePage()
+                : CardHomePage(
+                    'Cases',
+                    Icons.insights,
+                    covidData['cases'],
+                    Colors.lightBlue,
+                  ),
+            _isLoading
+                ? ShimmerObjects().shimmerHomePage()
+                : CardHomePage(
+                    'Active Cases',
+                    Icons.people,
+                    covidData['activeCases'],
+                    Colors.orange,
+                  ),
+            _isLoading
+                ? ShimmerObjects().shimmerHomePage()
+                : CardHomePage(
+                    'Recovered',
+                    Icons.science,
+                    covidData['recovered'],
+                    Colors.green,
+                  ),
+            _isLoading
+                ? ShimmerObjects().shimmerHomePage()
+                : CardHomePage(
+                    'Deaths',
+                    MdiIcons.skullCrossbones,
+                    covidData['deaths'],
+                    Colors.red,
+                  ),
           ],
         ),
       ),
