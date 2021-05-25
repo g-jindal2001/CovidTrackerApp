@@ -21,6 +21,8 @@ class DailyNewCasesOrDeaths extends StatefulWidget {
 }
 
 class _DailyNewCasesOrDeathsState extends State<DailyNewCasesOrDeaths> {
+
+  bool showAvg = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -48,15 +50,38 @@ class _DailyNewCasesOrDeathsState extends State<DailyNewCasesOrDeaths> {
                   padding: const EdgeInsets.only(
                       right: 18.0, left: 12.0, top: 44, bottom: 12),
                   child: LineChart(
-                    dailyNewCasesOrDeathsChild(
-                      widget.points,
-                      widget.maxNo,
-                    ),
+                    showAvg
+                        ? dailyNewCasesOrDeathsChild(
+                            widget.points,
+                            widget.maxNo,
+                          )
+                        : dailyNewCasesOrDeathsChild(
+                            widget.points,
+                            widget.maxNo,
+                          )
                   ),
                 ),
               ),
             ),
           ),
+          // SizedBox(
+          //   width: 60,
+          //   height: 34,
+          //   child: TextButton(
+          //     onPressed: () {
+          //       setState(() {
+          //         showAvg = !showAvg;
+          //       });
+          //     },
+          //     child: Text(
+          //       'avg',
+          //       style: TextStyle(
+          //           fontSize: 12,
+          //           color:
+          //               showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
       margin: EdgeInsets.symmetric(horizontal: 20),
@@ -147,3 +172,5 @@ LineChartData dailyNewCasesOrDeathsChild(
     ],
   );
 }
+
+

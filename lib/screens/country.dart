@@ -45,6 +45,12 @@ class _CountryState extends State<Country> {
     super.didChangeDependencies();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    
+  }
+
   Future<void> _refreshCountryData(BuildContext context, String country) async {
     await Provider.of<Data>(context, listen: false)
         .loadAndUpdateCovidCountryData(country);
