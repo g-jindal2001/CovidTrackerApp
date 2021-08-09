@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/data.dart';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+
 import '../providers/chartData.dart';
 
 import '../widgets/card_country_page.dart';
@@ -25,7 +29,9 @@ class _CountryState extends State<Country> {
       setState(() {
         _isLoading = true;
       });
-      final countryName = ModalRoute.of(context).settings.arguments as String;
+      final countryNameData =
+          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      final countryName = countryNameData['input'];
       try {
         Provider.of<Data>(context, listen: false)
             .loadAndUpdateCovidCountryData(countryName);
@@ -48,7 +54,6 @@ class _CountryState extends State<Country> {
   @override
   void dispose() {
     super.dispose();
-    
   }
 
   Future<void> _refreshCountryData(BuildContext context, String country) async {
@@ -57,107 +62,149 @@ class _CountryState extends State<Country> {
   }
 
   void _getSizeOfWidget(Size size) {
-   print(size.height);
-   print(size.width);
+    print(size.height);
+    print(size.width);
   }
 
   @override
   Widget build(BuildContext context) {
-    final countryName2 = ModalRoute.of(context).settings.arguments as String;
+    final countryNameData2 =
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+    final countryName2 = countryNameData2['input'];
+    //final bool countryBool = countryNameData2['oneTime'];
     final covidCountryData = Provider.of<Data>(context).data;
     final covidCountryChartData = Provider.of<ChartData>(context);
+    final deviceSize = MediaQuery.of(context).size;
+    final devicePadding = MediaQuery.of(context).padding;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Covid-19 stats in $countryName2'),
-      ),
-      body: RefreshIndicator(
-        onRefresh: () => _refreshCountryData(context, countryName2),
-        child: ListView(
-          children: [
-            SizedBox(height: 25),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: CardCountryPage(
-                      'Affected',
-                      covidCountryData['countryCases'],
-                      Colors.blue,
-                    ),
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text('Covid-19 stats in $countryName2'),
+          )
+        : AppBar(
+            title: Text('Covid-19 stats in $countryName2'),
+          );
+
+    final finalHeightExcludingAppBar =
+        deviceSize.height - appBar.preferredSize.height - devicePadding.top;
+
+    final content = ListView(
+      children: [
+        SizedBox(height: 20),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: finalHeightExcludingAppBar * 0.15,
+                  child: CardCountryPage(
+                    'Affected',
+                    covidCountryData['countryCases'],
+                    Colors.blue,
                   ),
-                  SizedBox(
-                    width: 24,
-                  ),
-                  Expanded(
-                    child: CardCountryPage(
-                      'Deaths',
-                      covidCountryData['countryDeaths'],
-                      Colors.red,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: 24,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: CardCountryPage(
-                      'Recovered',
-                      covidCountryData['countryRecovered'],
-                      Colors.green,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 24,
-                  ),
-                  Expanded(
-                    child: CardCountryPage(
-                      'Active',
-                      covidCountryData['countryActiveCases'],
-                      Colors.orange,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 24,
-                  ),
-                  Expanded(
-                    child: CardCountryPage(
-                      'Serious',
-                      covidCountryData['countrySerious'],
-                      Colors.purple,
-                    ),
-                  ),
-                ],
+              SizedBox(
+                width: 24,
               ),
-            ),
-            SizedBox(height: 24),
-            _isLoading
-                ? ShimmerObjects().shimmerCountryChart()
-                : DailyNewCasesOrDeaths(
-                    'Daily new cases',
-                    covidCountryChartData.plotDailyCasesData,
-                    covidCountryChartData.maxCases,
-                    _getSizeOfWidget,
+              Expanded(
+                child: Container(
+                  height: finalHeightExcludingAppBar * 0.15,
+                  child: CardCountryPage(
+                    'Deaths',
+                    covidCountryData['countryDeaths'],
+                    Colors.red,
                   ),
-            SizedBox(height: 24),
-            _isLoading
-                ? ShimmerObjects().shimmerCountryChart()
-                : DailyNewCasesOrDeaths(
-                    'Daily new deaths',
-                    covidCountryChartData.plotDailyDeathsData,
-                    covidCountryChartData.maxDeaths,
-                    _getSizeOfWidget,
-                  ),
-          ],
+                ),
+              ),
+            ],
+          ),
         ),
+        SizedBox(
+          height: 20,
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: finalHeightExcludingAppBar * 0.15,
+                  child: CardCountryPage(
+                    'Recovered',
+                    covidCountryData['countryRecovered'],
+                    Colors.green,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 24,
+              ),
+              Expanded(
+                child: Container(
+                  height: finalHeightExcludingAppBar * 0.15,
+                  child: CardCountryPage(
+                    'Active',
+                    covidCountryData['countryActiveCases'],
+                    Colors.orange,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 24,
+              ),
+              Expanded(
+                child: Container(
+                  height: finalHeightExcludingAppBar * 0.15,
+                  child: CardCountryPage(
+                    'Serious',
+                    covidCountryData['countrySerious'],
+                    Colors.purple,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 20),
+        _isLoading
+            ? ShimmerObjects().shimmerCountryChart()
+            : DailyNewCasesOrDeaths(
+                'Daily new cases',
+                covidCountryChartData.plotDailyCasesData,
+                covidCountryChartData.maxCases,
+                _getSizeOfWidget,
+              ),
+        SizedBox(height: 20),
+        _isLoading
+            ? ShimmerObjects().shimmerCountryChart()
+            : DailyNewCasesOrDeaths(
+                'Daily new deaths',
+                covidCountryChartData.plotDailyDeathsData,
+                covidCountryChartData.maxDeaths,
+                _getSizeOfWidget,
+              ),
+      ],
+    );
+
+    //print(covidCountryChartData.plotDailyCasesData);
+
+    final pageBody = SafeArea(
+      child: RefreshIndicator(
+        onRefresh: () => _refreshCountryData(context, countryName2),
+        child: content,
       ),
     );
+
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: appBar,
+            child: pageBody,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: pageBody,
+          );
   }
 }

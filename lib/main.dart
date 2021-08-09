@@ -8,6 +8,7 @@ import './screens/home_page.dart';
 import './screens/dosanddonts.dart';
 import './screens/country.dart';
 import './screens/about.dart';
+import './screens/world_map.dart';
 
 void main() {
   runApp(MyApp());
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
             DoesandDonts.routeName: (context) => DoesandDonts(),
             Country.routeName: (context) => Country(),
             About.routeName: (context) => About(),
+            WorldMapScreen.routeName: (context) => WorldMapScreen(),
           },
         ),
       ),

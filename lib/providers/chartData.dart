@@ -66,7 +66,7 @@ class ChartData with ChangeNotifier {
         }
       });
 
-      print(newCases.reduce(max));
+      //print(newCases.reduce(max));
 
       maxNo = newCases.reduce(max); //Get the highest number
 
@@ -79,6 +79,8 @@ class ChartData with ChangeNotifier {
       extractedDailyCases.keys.forEach((key) {
         newCasesDates.add(DateFormat('M/d/yy').parse(key));
       });
+
+      _plotDailyCasesData = [];
 
       for (var i in List.generate(newCasesKeys.length, (index) => index)) {
         _plotDailyCasesData.add(
@@ -128,7 +130,7 @@ class ChartData with ChangeNotifier {
         }
       });
 
-      print(newDeaths.reduce(max));
+      //print(newDeaths.reduce(max));
 
       maxNo = newDeaths.reduce(max);
 
@@ -141,6 +143,8 @@ class ChartData with ChangeNotifier {
       extractedDailyDeaths.keys.forEach((key) {
         newDeathsDates.add(DateFormat('M/d/yy').parse(key));
       });
+
+      _plotDailyDeathsData = [];
 
       for (var i in List.generate(newDeathsKeys.length, (index) => index)) {
         _plotDailyDeathsData.add(

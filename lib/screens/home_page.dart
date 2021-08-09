@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../providers/data.dart';
 
@@ -23,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   final _form = GlobalKey<FormState>();
   var _isInit = true;
   var _isLoading = false;
+  bool oneTime = false;
 
   @override
   void initState() {
@@ -73,8 +77,11 @@ class _HomePageState extends State<HomePage> {
     if (_userInput.toString().isNotEmpty) {
       Navigator.of(context).pushNamed(
         Country.routeName,
-        arguments:
-            toBeginningOfSentenceCase(_userInput.toString().toLowerCase()),
+        arguments: {
+          'input':
+              toBeginningOfSentenceCase(_userInput.toString().toLowerCase()),
+          'one_time': oneTime,
+        },
       );
       print(_userInput);
     }
@@ -87,84 +94,124 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final covidData = Provider.of<Data>(context).data;
+    final deviceSize = MediaQuery.of(context).size;
+    final devicePadding = MediaQuery.of(context).padding;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
-      ),
-      drawer: AppDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () => _refreshData(context),
-        child: ListView(
-          children: [
-            SizedBox(
-              height: 15,
-            ),
-            Form(
-              key: _form,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    labelText: 'Search By Country',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: BorderSide(),
-                    ),
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text('Home Page'),
+          )
+        : AppBar(
+            title: Text('Home Page'),
+          );
+
+    final finalHeightExcludingAppBar =
+        deviceSize.height - appBar.preferredSize.height - devicePadding.top;
+
+    final content = ListView(
+      children: [
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+          height: finalHeightExcludingAppBar * 0.1,
+          child: Form(
+            key: _form,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  labelText: 'Search By Country',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide(),
                   ),
-                  focusNode: _searchFocusNode,
-                  controller: _searchController,
-                  onSaved: (value) {
-                    _userInput = value;
-                  },
-                  onEditingComplete: () {
-                    setState(() {});
-                  },
-                  onFieldSubmitted: (value) {
-                    _saveForm();
-                  },
                 ),
+                focusNode: _searchFocusNode,
+                controller: _searchController,
+                onSaved: (value) {
+                  _userInput = value;
+                },
+                onEditingComplete: () {
+                  setState(() {});
+                },
+                onFieldSubmitted: (value) {
+                  _saveForm();
+                },
               ),
             ),
-            SizedBox(
-              height: 15,
-            ),
-            _isLoading
-                ? ShimmerObjects().shimmerHomePage()
-                : CardHomePage(
-                    'Cases',
-                    Icons.insights,
-                    covidData['cases'],
-                    Colors.lightBlue,
-                  ),
-            _isLoading
-                ? ShimmerObjects().shimmerHomePage()
-                : CardHomePage(
-                    'Active Cases',
-                    Icons.people,
-                    covidData['activeCases'],
-                    Colors.orange,
-                  ),
-            _isLoading
-                ? ShimmerObjects().shimmerHomePage()
-                : CardHomePage(
-                    'Recovered',
-                    Icons.science,
-                    covidData['recovered'],
-                    Colors.green,
-                  ),
-            _isLoading
-                ? ShimmerObjects().shimmerHomePage()
-                : CardHomePage(
-                    'Deaths',
-                    MdiIcons.skullCrossbones,
-                    covidData['deaths'],
-                    Colors.red,
-                  ),
-          ],
+          ),
         ),
+        SizedBox(
+          height: 15,
+        ),
+        _isLoading
+            ? ShimmerObjects().shimmerHomePage()
+            : Container(
+                height: finalHeightExcludingAppBar * 0.21,
+                child: CardHomePage(
+                  'Cases',
+                  Icons.insights,
+                  covidData['cases'],
+                  Colors.lightBlue,
+                ),
+              ),
+        _isLoading
+            ? ShimmerObjects().shimmerHomePage()
+            : Container(
+                height: finalHeightExcludingAppBar * 0.21,
+                child: CardHomePage(
+                  'Active Cases',
+                  Icons.people,
+                  covidData['activeCases'],
+                  Colors.orange,
+                ),
+              ),
+        _isLoading
+            ? ShimmerObjects().shimmerHomePage()
+            : Container(
+                height: finalHeightExcludingAppBar * 0.21,
+                child: CardHomePage(
+                  'Recovered',
+                  Icons.science,
+                  covidData['recovered'],
+                  Colors.green,
+                ),
+              ),
+        _isLoading
+            ? ShimmerObjects().shimmerHomePage()
+            : Container(
+                height: finalHeightExcludingAppBar * 0.21,
+                child: CardHomePage(
+                  'Deaths',
+                  MdiIcons.skullCrossbones,
+                  covidData['deaths'],
+                  Colors.red,
+                ),
+              ),
+      ],
+    );
+
+    final pageBody = SafeArea(
+      child: RefreshIndicator(
+        onRefresh: () => _refreshData(context),
+        child: content,
       ),
     );
+
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar,
+          )
+        : Scaffold(
+            appBar: appBar,
+            drawer: AppDrawer(),
+            body: RefreshIndicator(
+              onRefresh: () => _refreshData(context),
+              child: pageBody,
+            ),
+          );
   }
 }

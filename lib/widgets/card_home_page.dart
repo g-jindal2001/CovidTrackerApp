@@ -13,54 +13,56 @@ class CardHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 25,
-        horizontal: 5,
-      ),
-      child: ListTile(
-        title: Text(
-          titleText,
-          style: TextStyle(
-            fontSize: 25,
-            color: color,
-          ),
+    return LayoutBuilder(builder: (ctx, constraints) {
+      return Container(
+        padding: EdgeInsets.symmetric(
+          vertical: constraints.maxHeight * 0.08,
+          horizontal: 5,
         ),
-        subtitle: Container(
-          child: Column(
+        child: ListTile(
+          title: Text(
+            titleText,
+            style: TextStyle(
+              fontSize: 20,//font size can be small on certain devices and too large on other devices(TODO)
+              color: color,
+            ),
+          ),
+          subtitle: Container(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 6,
+                ),
+                Icon(
+                  iconData,
+                  size: 45,
+                  color: color,
+                ),
+              ],
+            ),
+            alignment: Alignment.centerLeft,
+          ),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                height: 6,
-              ),
-              Icon(
-                iconData,
-                size: 45,
-                color: color,
+              Text(
+                number.replaceAllMapped(reg, mathFunc),
+                style: TextStyle(
+                  fontSize: 23,
+                  color: color,
+                ),
               ),
             ],
           ),
-          alignment: Alignment.centerLeft,
         ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              number.replaceAllMapped(reg, mathFunc),
-              style: TextStyle(
-                fontSize: 23,
-                color: color,
-              ),
-            ),
-          ],
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.black12,
         ),
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.black12,
-      ),
-      height: 140,
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-    );
+        height: constraints.maxHeight,
+        width: constraints.maxWidth,
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      );
+    });
   }
 }

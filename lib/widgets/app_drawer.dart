@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/dosanddonts.dart';
 import '../screens/about.dart';
+import '../screens/world_map.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -16,9 +17,17 @@ class AppDrawer extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Icon(Icons.coronavirus),
-            title: Text("Worldwide"),
+            title: Text("Overall Stats"),
             onTap: () {
               Navigator.of(context).pushReplacementNamed('/');
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.map),
+            title: Text("World Map"),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed(WorldMapScreen.routeName);
             },
           ),
           Divider(),

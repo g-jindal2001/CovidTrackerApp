@@ -22,14 +22,18 @@ class CardCountryPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            text,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.w500,
+          Expanded(
+            child: FittedBox(
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ),
-          SizedBox(height: 18),
+          SizedBox(height: 12),
           FittedBox(
             child: Text(
               number.replaceAllMapped(reg, mathFunc),
